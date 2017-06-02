@@ -17,7 +17,6 @@ class Consumer
     temp_socket = UDPSocket.new
     temp_socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
     temp_socket.send "#{@port}", 0, "<broadcast>", 2900
-    p temp_socket.send "#{@port}", 0, "<broadcast>", 2900
     p "Broadcasted..."
   end
 end

@@ -1,6 +1,9 @@
 require 'socket'
 
 class Producer
+  # @TODO Make address input or based on network IP
+  # @TODO Find network IP
+  # @TODO 255 for broadcast address
   attr_accessor :consumers
   def initialize(port, consumer_ports)
     @port = port
