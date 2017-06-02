@@ -5,6 +5,7 @@ require_relative 'consumer'
 p "Consumer port?"
 c_port = gets.chomp.to_i
 c = Consumer.new(c_port)
+c.broadcast
 
 while true
   c.receive_msg

@@ -19,6 +19,12 @@ end
 
 producer = Producer.new(p_port, consumer_ports)
 
+Thread.new do
+  while true
+    producer.receive_port_broadcast
+  end
+end
+
 while true
   p "Message: "
   msg = gets.chomp
