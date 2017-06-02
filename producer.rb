@@ -26,17 +26,15 @@ class Producer
 
   def receive_port_broadcast
     broadcast_socket = UDPSocket.new
-    broadcast_socket.bind("127.0.0.1", 3100)
-    p broadcast_socket.recvfrom_nonblock(1024)
-    begin # emulate blocking recvfrom
-      p broadcast_socket.recvfrom_nonblock(1024)  #=> ["aaa", ["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"]]
+    broadcast_socket.bind("0.0.0.0", 2900) # 0.0.0.0 is the address to receive broadcasts
+    begin # emulate blocking recvfrom, handle exception if no message, retry until receives one
+      p port_num = broadcast_socket.recvfrom_nonblock(1024)[0]  #=> ["aaa", ["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"]]
     rescue IO::WaitReadable
       IO.select([broadcast_socket])
       retry
     end
-    p "Receive broadcast"
-    @consumer_ports << new_port.to_i
+    p "New consumer online: #{port_num}"
+    @consumer_ports << port_num.to_i
+    @consumer_ports.uniq!
   end
-
-  # how to broadcast indefinitely?
 end

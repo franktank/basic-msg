@@ -12,10 +12,12 @@ class Consumer
     p @udp_socket.recvfrom(1024)
   end
 
+  # Send broadcast out when consumer starts
   def broadcast
     temp_socket = UDPSocket.new
     temp_socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
-    temp_socket.send "#{@port}", 0, "127.0.0.255", 3100
-    p "Broadcasted.."
+    temp_socket.send "#{@port}", 0, "<broadcast>", 2900
+    p temp_socket.send "#{@port}", 0, "<broadcast>", 2900
+    p "Broadcasted..."
   end
 end
