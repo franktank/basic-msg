@@ -36,4 +36,17 @@ class Consumer
       sleep 1
     end
   end
+
+  def send_multicast
+    # multicast address range 224.0.0.0 to 239.255.255.255
+    multicast_addr = "225.1.2.3"
+    port = 50001
+    # begin
+      socket = UDPSocket.open
+      socket.setsockopt(:IPPROTO_IP, :IP_MULTICAST_TTL, 1)
+      socket.send("hey", 0, multicast_addr, port)
+    # ensure
+    #   socket.close
+    # end
+  end
 end

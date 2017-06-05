@@ -1,4 +1,5 @@
 require 'socket'
+require 'ipaddr'
 
 class Producer
   # @TODO Make address input or based on network IP
@@ -53,5 +54,19 @@ class Producer
     p "New consumer online: #{port_num}"
     @consumer_ports << port_num.to_i
     @consumer_ports.uniq!
+  end
+
+  def recv_multicast
+    multicast_addr= "225.1.2.3"
+    port = 50001
+    ip =  IPAddr.new(multicast_addr).hton + IPAddr.new("0.0.0.0").hton
+    sock = UDPSocket.new
+    sock.setsockopt(Socket::IPPROTO_IP, Socket::IP_ADD_MEMBERSHIP, ip)
+    sock.bind(Socket::INADDR_ANY, port)
+    # sock.bind("0.0.0.0", port)
+    loop do
+      msg, info = sock.recvfrom(1024)
+      puts "MSG: #{msg} from #{info[2]} (#{info[3]})/#{info[1]} len #{msg.size}"
+    end
   end
 end
