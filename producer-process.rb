@@ -2,18 +2,13 @@ require 'socket'
 require_relative 'producer'
 
 # Run in own process - new terminal tab
-consumers = []
-consumer_ports = []
 p "What is the producer port?"
 p_port = gets.chomp.to_i
 
-producer = Producer.new(p_port, consumer_ports)
+producer = Producer.new(p_port)
 
 Thread.new do
-  # while true
-    # producer.receive_port_broadcast
-    producer.recv_multicast
-  # end
+  producer.recv_multicast
 end
 
 while true

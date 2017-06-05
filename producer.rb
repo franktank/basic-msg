@@ -2,14 +2,10 @@ require 'socket'
 require 'ipaddr'
 
 class Producer
-  # @TODO Make address input or based on network IP
-  # @TODO Find network IP
-  # @TODO 255 for broadcast address
-  # @TODO Need local IP and port from consumer to producer for communication
   attr_accessor :consumers
-  def initialize(port, consumer_ports)
+  def initialize(port)
     @port = port
-    @consumer_ports = consumer_ports
+    @consumer_ports = Hash.new
     @udp_socket = UDPSocket.new
     @udp_socket.bind(local_ip, port)
   end
@@ -25,18 +21,11 @@ class Producer
     Socket.do_not_reverse_lookup = orig
   end
 
-  def print_consumer_ports
-    puts @consumer_ports
-  end
-
-  def add_consumer(c, p)
-    @consumers << c
-  end
-
   def contact_port(message)
     p @consumer_ports
-    @consumer_ports.each do |cp|
-      @udp_socket.send message, 0, local_ip, cp
+    @consumer_ports.each do |key, value|
+      pa = key.split(",")
+      @udp_socket.send message, 0, pa[1], pa[0]
     end
   end
 
@@ -65,8 +54,16 @@ class Producer
     sock.bind(Socket::INADDR_ANY, port)
     # sock.bind("0.0.0.0", port)
     loop do
-      msg, info = sock.recvfrom(1024)
-      puts "MSG: #{msg} from #{info[2]} (#{info[3]})/#{info[1]} len #{msg.size}"
+      # need exceptions for background threads
+      begin
+        msg, info = sock.recvfrom(1024)
+        pa = msg.split(",")
+        @consumer_ports[msg] = pa[0]
+        # p pa
+      rescue =>e
+        p e
+        raise
+      end
     end
   end
 end
