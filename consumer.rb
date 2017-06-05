@@ -28,9 +28,9 @@ class Consumer
     while true
       temp_socket = UDPSocket.new
       temp_socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
+      l_ip = (local_ip.split('.')[0..2]+['255']).join('.')
       # Pray <broadcast> works on wifi network
-      temp_socket.send "#{@port},#{local_ip}", 0, "<broadcast>", 2900
-      p temp_socket.send "#{@port},#{local_ip}", 0, "<broadcast>", 2900
+      temp_socket.send "#{@port},#{local_ip}", 0, l_ip, 2900
       # Broadcast local IP and port so producer can contact.
       p "Broadcasted..."
       sleep 1
